@@ -1,0 +1,122 @@
+/* --- App shell: fill the whole viewport so no white strip --- */
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; width: 100%; margin: 0; }
+body { background: #060a14; color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+
+/* full-bleed background */
+.page {
+  min-height: 100dvh;
+  width: 100%;
+  display: grid;
+  place-items: start center;
+  padding: 24px;
+  background:
+    radial-gradient(1400px 900px at 30% -10%, rgba(49,76,140,.45), transparent 50%),
+    radial-gradient(1400px 900px at 80% 110%, rgba(40,197,176,.25), transparent 50%),
+    linear-gradient(180deg, #0b1020, #060a14 35%, #060a14);
+}
+
+/* card */
+.card {
+  width: min(1100px, 96vw);
+  background: rgba(9, 14, 29, .86);
+  border: 1px solid #27324a;
+  border-radius: 18px;
+  padding: 22px;
+  margin-inline: auto;
+  box-shadow: 0 20px 80px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.02);
+  backdrop-filter: blur(6px);
+}
+
+.topbar { display:flex; align-items:baseline; gap:12px; margin-bottom:10px; }
+h1 { margin: 0; font-size: 44px; letter-spacing: .5px; color: #cbd5e1; }
+.subtitle { font-size:12px; color:#8aa0c0 }
+
+/* tabs */
+.tabs { display:flex; gap:10px; margin: 6px 0 16px; }
+.tab {
+  padding:8px 12px; border-radius:10px; border:1px solid #2b3a5a; background:#0b1226; color:#cbd5e1;
+}
+.tab.active { background: linear-gradient(180deg, #142346, #101a34); color:#fff; border-color:#3b5faa; }
+
+/* form */
+.form { display:grid; gap:10px; }
+label { font-size:13px; color:#9db1cc; }
+input {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #334155;
+  background: #0b1020;
+  color: #e2e8f0;
+}
+button {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 0;
+  background: #2f5bff;
+  color: white; font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(47,91,255,.35);
+}
+button:disabled { opacity: .5; cursor: not-allowed; box-shadow: none; }
+
+.tiny { color:#8aa0c0; font-size:12px; }
+
+/* gate container (games) */
+.gate { margin: 14px 0 10px; }
+.gate-head { margin: 6px 0 10px; color:#cbd5e1; }
+.gc { border: 1px solid #27324a; border-radius: 14px; overflow: hidden; background:#070b15; }
+.gc canvas { display:block; width:100%; height:auto; } /* responsive canvas */
+.gc-bar { display:flex; gap:10px; align-items:center; padding:8px; background:#0b1226; border-top:1px solid #27324a; }
+.gc-bar>button { background:#132044; border:1px solid #32405f; color:#d1e0ff; }
+
+/* ridiculous signup widgets (blender / forge) */
+.ridiculous { margin: 14px 0; padding: 12px; border:1px solid #27324a; border-radius:14px; background:#0b1226; }
+.ridiculous h3 { margin: 0 0 10px; }
+.blend-grid { display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:8px; margin-bottom:10px; }
+.word { padding:10px 12px; border-radius:10px; border:1px solid #334155; background:#0b1020; color:#dbeafe; }
+.pour-row { display:grid; grid-template-columns: 260px 1fr; gap:16px; align-items:center; margin-top:10px; }
+.pour-area { display:grid; justify-items:center; gap:8px; }
+.pour-jar { width:120px; height:160px; border:2px solid #64748b; border-bottom-left-radius:16px; border-bottom-right-radius:16px; background:#060a14; overflow:hidden; position:relative; }
+.pour-fill { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(180deg,#93c5fd,#3b82f6); transition:height .15s; }
+.hold { padding:8px 10px; border-radius:10px; border:1px dashed #3b82f6; background:#0b1020; color:#bfdbfe; }
+
+.msg { margin-top: 8px; color: #f59e0b; }
+
+/* Buttons */
+button {
+  appearance: none;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  color: #fff;
+  font-weight: 700;
+  padding: 12px 16px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, .35);
+  transition: transform .05s ease, filter .15s ease;
+}
+button:hover { filter: brightness(1.05); }
+button:active { transform: translateY(1px); }
+button:disabled {
+  background: #1f2937;
+  color: #9ca3af;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Bottom action row on forms */
+.form .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+
+/* small screens */
+@media (max-width: 720px){
+  .pour-row { grid-template-columns: 1fr; }
+  h1 { font-size: 34px; }
+}

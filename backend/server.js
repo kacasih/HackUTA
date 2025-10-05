@@ -1,43 +1,39 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-import bcrypt from "bcryptjs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-app.use(cors());               // dev: allow all origins
+app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 3001;
+// Simple health check
+app.get("/health", (_req, res) => res.json({ ok: true }));
 
-// super-simple in-memory "DB"
-const users = new Map();
-// Seed demo user: test@example.com / test1234
-{
-  const email = "test@example.com";
-  const hash = bcrypt.hashSync("test1234", 10);
-  users.set(email, { email, hash, createdAt: new Date().toISOString() });
+// Dumb in-memory "scores" store
+let bestTimes = []; // {name, ms, at}
+
+// Save a completion
+app.post("/api/score", (req, res) => {
+  const { name = "anon", ms = 0 } = req.body || {};
+  if (typeof ms !== "number" || ms <= 0) return res.status(400).json({ error: "bad ms" });
+  bestTimes.push({ name: String(name).slice(0, 32), ms, at: Date.now() });
+  bestTimes = bestTimes.sort((a, b) => a.ms - b.ms).slice(0, 20);
+  res.json({ ok: true, bestTimes });
+});
+
+// Read top scores
+app.get("/api/score", (_req, res) => res.json({ bestTimes }));
+
+// (Optional) serve built frontend in production
+if (process.env.NODE_ENV === "production") {
+  const dist = path.resolve(__dirname, "../frontend/dist");
+  app.use(express.static(dist));
+  app.get("*", (_req, res) => res.sendFile(path.join(dist, "index.html")));
 }
 
-app.get("/", (_req, res) => res.json({ ok: true, service: "gravity-courier-backend" }));
-
-app.post("/api/signup", async (req, res) => {
-  const { email, password } = req.body || {};
-  if (!email || !password) return res.status(400).json({ message: "email and password required" });
-  if (users.has(email)) return res.status(409).json({ message: "user already exists" });
-  const hash = await bcrypt.hash(password, 10);
-  users.set(email, { email, hash, createdAt: new Date().toISOString() });
-  res.json({ message: "signup ok" });
-});
-
-app.post("/api/login", async (req, res) => {
-  const { email, password } = req.body || {};
-  const u = users.get(email);
-  if (!u) return res.status(401).json({ message: "invalid credentials" });
-  const ok = await bcrypt.compare(password, u.hash);
-  if (!ok) return res.status(401).json({ message: "invalid credentials" });
-  // You would normally issue a JWT or session cookie here.
-  res.json({ message: "login ok", user: { email: u.email, createdAt: u.createdAt } });
-});
-
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`API listening on http://localhost:${PORT}`));
